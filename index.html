@@ -1,0 +1,336 @@
+<!-- 
+  Archivo: index.html
+  Descripción: Dashboard o portal interactivo central de acceso a todos los documentos del proceso de postulación del Semilla Inicia 2026 de CORFO (Corporación de Fomento de la Producción) para la Plataforma de Inteligencia Clínica.
+  Fecha de última modificación: 2026-05-18
+  Autor: Antigravity AI
+-->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal de Postulación CORFO Semilla Inicia 2026 | Plataforma de Inteligencia Clínica</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0b0f19;
+            --primary: #10b981;
+            --primary-light: #34d399;
+            --secondary: #8b5cf6;
+            --secondary-light: #a78bfa;
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --glass-bg: rgba(17, 24, 39, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --card-hover: rgba(255, 255, 255, 0.03);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.08) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.1) 0px, transparent 50%),
+                radial-gradient(at 50% 50%, rgba(17, 24, 39, 0.5) 0px, transparent 100%);
+            background-attachment: fixed;
+            color: var(--text-main);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            padding: 3rem 1.5rem;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 4rem;
+            position: relative;
+        }
+
+        .title-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(139, 92, 246, 0.15));
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: var(--primary-light);
+            padding: 0.5rem 1.5rem;
+            border-radius: 999px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.1);
+        }
+
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: clamp(2.5rem, 5vw, 3.8rem);
+            font-weight: 800;
+            line-height: 1.15;
+            background: linear-gradient(135deg, #ffffff 30%, #a78bfa 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            color: var(--text-muted);
+            max-width: 700px;
+            margin: 0 auto;
+            line-height: 1.6;
+            font-weight: 400;
+        }
+
+        .grid-docs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .card-doc {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2.5rem 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            backdrop-filter: blur(16px);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-doc::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, transparent 100%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .card-doc:hover {
+            transform: translateY(-8px);
+            border-color: rgba(16, 185, 129, 0.3);
+            box-shadow: 0 20px 40px rgba(16, 185, 129, 0.08);
+            background: var(--card-hover);
+        }
+
+        .card-doc:hover::before {
+            opacity: 1;
+        }
+
+        .icon-wrapper {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .card-doc:hover .icon-wrapper {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .primary-icon {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: rgba(16, 185, 129, 0.2);
+            color: var(--primary-light);
+        }
+
+        .secondary-icon {
+            background: rgba(139, 92, 246, 0.1);
+            border-color: rgba(139, 92, 246, 0.2);
+            color: var(--secondary-light);
+        }
+
+        .doc-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #ffffff;
+            letter-spacing: -0.01em;
+        }
+
+        .doc-desc {
+            font-size: 0.95rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 2.5rem;
+            flex-grow: 1;
+        }
+
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .btn-action {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.9rem 1.5rem;
+            border-radius: 12px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            font-size: 0.95rem;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: #0b0f19;
+            border: none;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(16, 185, 129, 0.35);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        footer {
+            text-align: center;
+            padding: 2.5rem 1.5rem;
+            border-top: 1px solid var(--glass-border);
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            background: rgba(7, 10, 19, 0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        footer p {
+            margin-bottom: 0.5rem;
+        }
+
+        .tech-tags {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .tech-tag {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <div class="title-badge">Postulación Semilla Inicia 2026</div>
+            <h1>Plataforma de Inteligencia Clínica</h1>
+            <p class="subtitle">Portal interactivo central con toda la documentación oficial, borradores y guiones validados para la postulación ante CORFO (Corporación de Fomento de la Producción).</p>
+        </header>
+
+        <main class="grid-docs">
+            <!-- Card 1 -->
+            <div class="card-doc">
+                <div>
+                    <div class="icon-wrapper primary-icon">📝</div>
+                    <h2 class="doc-title">Borrador del Formulario</h2>
+                    <p class="doc-desc">Respuestas oficiales completas del formulario interactivo listas para copiar y pegar. Incluye ODS (Objetivos de Desarrollo Sostenible), Focalización del CDPR (Comité de Desarrollo Productivo Regional) e Innovación.</p>
+                </div>
+                <div class="btn-group">
+                    <a href="Respuestas_Formulario_Corfo_2026.html" class="btn-action btn-primary">🌐 Abrir Formulario Web</a>
+                    <a href="Respuestas_Formulario_Corfo_2026.pdf" target="_blank" class="btn-action btn-secondary">📄 Descargar PDF</a>
+                </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="card-doc">
+                <div>
+                    <div class="icon-wrapper secondary-icon">🧪</div>
+                    <h2 class="doc-title">Análisis y Viabilidad</h2>
+                    <p class="doc-desc">Análisis de consistencia del proyecto, justificación de innovación, mitigación de riesgos técnicos del CENS (Centro Nacional de Sistemas de Información en Salud) e interoperabilidad clínica.</p>
+                </div>
+                <div class="btn-group">
+                    <a href="Analisis_Bitacora_Corfo_2026.html" class="btn-action btn-primary" style="background: linear-gradient(135deg, var(--secondary), var(--secondary-light)); color: white;">🌐 Abrir Análisis Web</a>
+                    <a href="Analisis_Bitacora_Corfo_2026.pdf" target="_blank" class="btn-action btn-secondary">📄 Descargar PDF</a>
+                </div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="card-doc">
+                <div>
+                    <div class="icon-wrapper primary-icon" style="color: #60a5fa; background: rgba(96, 165, 250, 0.1); border-color: rgba(96, 165, 250, 0.2);">🎬</div>
+                    <h2 class="doc-title">Pitch de Video 3 Minutos</h2>
+                    <p class="doc-desc">Guion de pitch técnico optimizado para la evaluación, storyboard de escenas de preproducción y estructura de presentación en video exigida por las bases.</p>
+                </div>
+                <div class="btn-group">
+                    <a href="Pitch_y_Video_Corfo_2026.html" class="btn-action btn-primary" style="background: linear-gradient(135deg, #3b82f6, #60a5fa); color: white;">🌐 Abrir Guion Web</a>
+                    <a href="Pitch_y_Video_Corfo_2026.pdf" target="_blank" class="btn-action btn-secondary">📄 Descargar PDF</a>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer>
+        <p>© 2026 Plataforma de Inteligencia Clínica. Diseñado exclusivamente para el proceso de postulación Semilla Inicia de CORFO (Corporación de Fomento de la Producción).</p>
+        <p style="font-size: 0.8rem; opacity: 0.6;">Última actualización: 18 de mayo de 2026 | Desarrollado con ❤️ por Antigravity AI</p>
+        <div class="tech-tags">
+            <span class="tech-tag">CENS (Centro Nacional de Sistemas de Información en Salud)</span>
+            <span class="tech-tag">HL7 FHIR (Health Level Seven Fast Healthcare Interoperability Resources)</span>
+            <span class="tech-tag">SNOMED CT (Systematized Nomenclature of Medicine - Clinical Terms)</span>
+            <span class="tech-tag">IA (Inteligencia Artificial)</span>
+        </div>
+    </footer>
+
+</body>
+</html>
