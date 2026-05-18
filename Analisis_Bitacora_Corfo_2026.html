@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estrategia Corfo Inicia 2026 - Inteligencia Clínica</title>
+    <!--
+    - Que hace el archivo: Análisis estratégico e interactivo premium que fusiona las bases de nuestro piloto inicial con las innovaciones técnicas implementadas en nuestra plataforma de salud digital para la postulación a CORFO (Corporación de Fomento de la Producción) 2026.
+    - Fecha de ultima modificacion: 2026-05-18
+    - Nombre del autor: Antigravity AI (Inteligencia Artificial)
+    -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-light: #818cf8;
+            --secondary: #ec4899;
+            --bg-dark: #0f172a;
+            --bg-card: rgba(30, 41, 59, 0.7);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --success: #10b981;
+            --accent: #0ea5e9;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 0%, rgba(236, 72, 153, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(14, 165, 233, 0.15) 0px, transparent 50%);
+            background-attachment: fixed;
+            line-height: 1.6;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 4rem;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .title-badge {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            background: rgba(99, 102, 241, 0.2);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 999px;
+            color: var(--primary-light);
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            margin-bottom: 1.5rem;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .subtitle {
+            font-size: 1.25rem;
+            color: var(--text-muted);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .glass-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.6);
+            border-color: rgba(99, 102, 241, 0.3);
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: #fff;
+        }
+
+        .section-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 10px 20px -5px rgba(236, 72, 153, 0.3);
+        }
+
+        ul.styled-list {
+            list-style: none;
+        }
+
+        ul.styled-list li {
+            position: relative;
+            padding-left: 2rem;
+            margin-bottom: 1rem;
+            color: var(--text-muted);
+        }
+
+        ul.styled-list li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--primary-light);
+            font-weight: bold;
+        }
+
+        strong {
+            color: #fff;
+        }
+
+        /* Tabs UI */
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 1rem;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .tab-btn.active {
+            color: #fff;
+            background: rgba(99, 102, 241, 0.2);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Budget Widget */
+        .budget-widget {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.5rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 16px;
+            margin-top: 1.5rem;
+        }
+
+        .budget-total {
+            font-size: 2.5rem;
+            font-weight: 800;
+            font-family: 'Outfit', sans-serif;
+            color: var(--success);
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            background: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .print-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 999px;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 10px 20px -5px rgba(236, 72, 153, 0.4);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            z-index: 100;
+        }
+
+        .print-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 25px -5px rgba(236, 72, 153, 0.6);
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            width: 100%;
+            height: 12px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 999px;
+            margin: 1rem 0;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            width: 85%;
+        }
+
+        @media print {
+            body {
+                background: white !important;
+                color: black !important;
+            }
+            .glass-card {
+                background: none;
+                border: 1px solid #ccc;
+                box-shadow: none;
+                color: black;
+                page-break-inside: avoid;
+            }
+            h1, .section-title, strong, .subtitle, .budget-total, ul.styled-list li {
+                color: black !important;
+                -webkit-text-fill-color: black !important;
+            }
+            .print-btn {
+                display: none;
+            }
+            .tab-content {
+                display: block !important;
+            }
+            .tabs {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <button class="print-btn" onclick="window.print()">🖨️ Exportar a PDF</button>
+
+    <div class="container">
+        <header>
+            <div class="title-badge">Análisis Estratégico Integral</div>
+            <h1>Corfo Semilla Inicia 2026</h1>
+            <p class="subtitle">Estrategia unificada que fusiona las bases de nuestro <strong>piloto de salud inicial</strong> con la robusta arquitectura de software de la <strong>plataforma de inteligencia clínica</strong> para posicionarse como la principal EBCT (Empresa de Base Científico-Tecnológica) desde la Región de Coquimbo.</p>
+        </header>
+
+        <div class="grid-2">
+            <!-- Columna 1 -->
+            <div class="glass-card">
+                <h2 class="section-title">
+                    <div class="section-icon">👩‍💻</div>
+                    Estructura Societaria
+                </h2>
+                <ul class="styled-list">
+                    <li><strong>Empresa Nueva (0 Ventas):</strong> Cumplimiento estricto del criterio de admisibilidad de CORFO (Corporación de Fomento de la Producción). Postulación como persona natural con posterior constitución de sociedad o sociedad nueva sin ingresos comerciales previos.</li>
+                    <li><strong>Liderazgo Femenino Exclusivo:</strong> Fundadora principal mujer, desbloqueando el bono especial de cofinanciamiento estatal al **85%** con tope de **$17.000.000 CLP (Pesos Chilenos)**.</li>
+                    <li><strong>Equipo Fundador:</strong> 2 profesionales con perfiles de alta capacidad técnica en desarrollo cloud, seguridad de la información e ingeniería en salud digital.</li>
+                </ul>
+            </div>
+
+            <!-- Columna 2 -->
+            <div class="glass-card">
+                <h2 class="section-title">
+                    <div class="section-icon">💰</div>
+                    Presupuesto y Distribución
+                </h2>
+                <p style="color: var(--text-muted); margin-bottom: 1rem;">Distribución del subsidio máximo de $17.000.000 CLP (Pesos Chilenos) (Aporte beneficiario del 15% restante de forma pecuniaria o valorizada):</p>
+                <div class="budget-widget">
+                    <div>
+                        <span class="tag">Bono Mujer CORFO</span>
+                        <div class="budget-total">$17.000.000</div>
+                    </div>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar"></div>
+                </div>
+                <ul class="styled-list" style="margin-top: 1.5rem;">
+                    <li><strong>Sueldos y Honorarios:</strong> Compensación de los 2 fundadores para el desarrollo intensivo de la plataforma.</li>
+                    <li><strong>Suscripciones de IA (Inteligencia Artificial):</strong> Consumo de APIs (Interfaces de Programación de Aplicaciones) para el Copilot clínico y transcripciones.</li>
+                    <li><strong>Servidores e Infraestructura:</strong> Alojamiento en la nube, bases de datos PostgreSQL en Supabase, y orquestación con n8n.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Sección de validación clínica e innovación -->
+        <div class="glass-card">
+            <h2 class="section-title">
+                <div class="section-icon">🧪</div>
+                Estrategia y Tracción de la Solución de Salud
+            </h2>
+            <div class="grid-2" style="margin-top: 1rem; gap: 1.5rem;">
+                <div>
+                    <strong style="color: var(--primary-light); font-size: 1.1rem; display: block; margin-bottom: 0.5rem;">El Problema del Mercado:</strong>
+                    <p style="color: var(--text-muted); font-size: 0.95rem;">
+                        Sobrecarga administrativa clínica y altos niveles de burnout (síndrome de desgaste profesional) de más de un 40% en profesionales independientes y centros de salud de la Región de Coquimbo. Las soluciones de agenda tradicionales son solo administrativas y no abordan el flujo clínico.
+                    </p>
+                </div>
+                <div>
+                    <strong style="color: var(--secondary); font-size: 1.1rem; display: block; margin-bottom: 0.5rem;">Resultados e Hitos a Lograr (10 Meses):</strong>
+                    <p style="color: var(--text-muted); font-size: 0.95rem;">
+                        Ejecución de piloto real en la Región de Coquimbo con un centro clínico ya asociado (15 profesionales). Conversión proyectada del 30% al 40% en clientes suscritos al plan SaaS (Software como Servicio). Plan de expansión inmediato a la Región Metropolitana con un segundo centro clínico de 15 especialistas (~30 usuarios iniciales totales).
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-card">
+            <h2 class="section-title">
+                <div class="section-icon">🎯</div>
+                Criterios de Evaluación y Valor Tecnológico
+            </h2>
+            
+            <div class="tabs">
+                <button class="tab-btn active" onclick="openTab(event, 'tab-innovacion')">Innovación (40%)</button>
+                <button class="tab-btn" onclick="openTab(event, 'tab-escalabilidad')">Escalabilidad (30%)</button>
+                <button class="tab-btn" onclick="openTab(event, 'tab-equipo')">Equipo (30%)</button>
+            </div>
+
+            <div id="tab-innovacion" class="tab-content active">
+                <ul class="styled-list">
+                    <li><strong>Registro por Narrativa asistido por IA (Inteligencia Artificial):</strong> Alternativa única a la grabación pasiva de sesiones. El profesional relata en lenguaje natural y el sistema genera una ficha clínica estructurada.</li>
+                    <li><strong>Supervisión Clínica Asistida:</strong> El sistema actúa como un copiloto que organiza el caso clínico y plantea preguntas formativas y bibliografía académica para abrir nuevas perspectivas profesionales.</li>
+                    <li><strong>Interoperabilidad e Integración Interdisciplinaria inteligente:</strong> Estándar HL7 FHIR (Fast Healthcare Interoperability Resources) y codificación diagnóstica SNOMED CT (Systematized Nomenclature of Medicine - Clinical Terms) certificada por el CENS (Centro Nacional de Sistemas de Información en Salud).</li>
+                    <li><strong>SII (Servicio de Impuestos Internos) Master Orchestrator (Orquestador Maestro del SII):</strong> Integración inteligente que emite boletas de honorarios y facturas automáticamente al instante mediante robots de automatización con n8n y Puppeteer.</li>
+                </ul>
+            </div>
+
+            <div id="tab-escalabilidad" class="tab-content">
+                <ul class="styled-list">
+                    <li><strong>Modelo SaaS (Software como Servicio) B2B y B2C:</strong> Suscripción mensual con planes escalables para centros médicos multidisciplinarios y profesionales independientes.</li>
+                    <li><strong>Estrategia de Adquisición Digital:</strong> Embudo automatizado apoyado por marketing de contenidos clínicos, pruebas gratuitas de 7 días, y autogestión de usuarios en la plataforma.</li>
+                    <li><strong>Sostenibilidad Ambiental e Impacto (ODS 3):</strong> Aportando directamente al Objetivo de Desarrollo Sostenible de Salud y Bienestar. Digitalización total que reduce la huella de carbono al eliminar papelería clínica.</li>
+                </ul>
+            </div>
+
+            <div id="tab-equipo" class="tab-content">
+                <ul class="styled-list">
+                    <li><strong>Dedicación Completa (180 Horas/Mes):</strong> Ambos fundadores contarán con dedicación intensiva mensual al proyecto para asegurar los hitos de validación comercial y técnica.</li>
+                    <li><strong>Arquitectura de Seguridad Zero-Trust (Seguridad de Confianza Cero):</strong> Aislamiento multitenant robusto, autenticación de doble factor (2FA) obligatoria, e identidad de administración global altamente encriptada (Master Password).</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openTab(evt, tabName) {
+            var i, tabcontent, tablinks;
+            tabcontent = document.getElementsByClassName("tab-content");
+            for (i = 0; i < tabcontent.length; i++) {
+                tabcontent[i].classList.remove("active");
+            }
+            tablinks = document.getElementsByClassName("tab-btn");
+            for (i = 0; i < tablinks.length; i++) {
+                tablinks[i].classList.remove("active");
+            }
+            document.getElementById(tabName).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+    </script>
+</body>
+</html>
