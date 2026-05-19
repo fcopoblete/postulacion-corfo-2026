@@ -238,9 +238,106 @@
 </head>
 <body>
 
-    <button class="print-btn" onclick="window.print()">🖨️ Exportar a PDF</button>
+    <!-- PASSWORD GATE START -->
+    <div id="password-gate-container" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #0b0f19; background-image: radial-gradient(at 0% 0%, rgba(139, 92, 246, 0.15) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.15) 0px, transparent 50%); display: flex; align-items: center; justify-content: center; z-index: 99999; font-family: 'Inter', sans-serif;">
+        <div style="background: rgba(22, 30, 49, 0.75); border: 1px solid rgba(255, 255, 255, 0.08); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); padding: 3rem; border-radius: 28px; width: 100%; max-width: 460px; box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6); text-align: center; margin: 1.5rem; transition: all 0.3s ease;">
+            <div style="width: 64px; height: 64px; background: rgba(139, 92, 246, 0.15); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 20px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem;">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            </div>
+            <h2 style="font-family: 'Outfit', sans-serif; font-size: 1.8rem; font-weight: 800; color: #fff; margin-bottom: 0.5rem;">Acceso Restringido</h2>
+            <p style="color: #9ca3af; font-size: 0.95rem; margin-bottom: 2rem; line-height: 1.5;">Ingresa la contraseña maestra para visualizar la postulación de Bitácora Clínica.</p>
+            
+            <form id="password-form" onsubmit="verifyPassword(event)" style="display: flex; flex-direction: column; gap: 1rem;">
+                <div style="position: relative; width: 100%;">
+                    <input type="password" id="password-input" placeholder="Contraseña..." required autofocus style="width: 100%; padding: 1rem 1.25rem; background: rgba(0, 0, 0, 0.3); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; color: #fff; font-size: 1rem; outline: none; transition: border-color 0.25s, box-shadow 0.25s;">
+                    <button type="button" onclick="togglePasswordVisibility()" style="position: absolute; right: 1rem; top: 50%; transform: translateY(-50%); background: none; border: none; color: #9ca3af; cursor: pointer; display: flex; align-items: center; padding: 0.25rem;">
+                        <svg id="eye-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    </button>
+                </div>
+                <div id="error-message" style="color: #f43f5e; font-size: 0.85rem; font-weight: 600; text-align: left; display: none;">Contraseña incorrecta. Inténtalo de nuevo.</div>
+                <button type="submit" style="width: 100%; padding: 1rem; background: linear-gradient(135deg, #8b5cf6, #6d28d9); border: none; border-radius: 12px; color: #fff; font-size: 1rem; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3); transition: transform 0.2s, box-shadow 0.2s;">Acceder</button>
+            </form>
+        </div>
+    </div>
 
-    <div class="container">
+    <script>
+        const MASTER_HASH = '3ef3e6e542039b668d905faae284e1bb05b538834482c17b66b7d320a16a01fb';
+
+        async function sha256(message) {
+            const msgBuffer = new TextEncoder().encode(message);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+            return hashHex;
+        }
+
+        function togglePasswordVisibility() {
+            const input = document.getElementById('password-input');
+            const eyeIcon = document.getElementById('eye-icon');
+            if (input.type === 'password') {
+                input.type = 'text';
+                eyeIcon.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>';
+            } else {
+                input.type = 'password';
+                eyeIcon.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
+            }
+        }
+
+        async function verifyPassword(event) {
+            event.preventDefault();
+            const input = document.getElementById('password-input').value;
+            const hash = await sha256(input);
+            if (hash === MASTER_HASH) {
+                sessionStorage.setItem('bitacora_auth', hash);
+                unlockPage();
+            } else {
+                document.getElementById('error-message').style.display = 'block';
+                const inputEl = document.getElementById('password-input');
+                inputEl.style.borderColor = '#f43f5e';
+                inputEl.style.boxShadow = '0 0 0 3px rgba(244, 63, 94, 0.15)';
+                inputEl.value = '';
+                inputEl.focus();
+            }
+        }
+
+        function unlockPage() {
+            document.getElementById('password-gate-container').style.display = 'none';
+            document.getElementById('content-container').style.display = 'block';
+        }
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            const inputEl = document.getElementById('password-input');
+            if (inputEl) {
+                inputEl.addEventListener('focus', () => {
+                    if (inputEl.style.borderColor !== 'rgb(244, 63, 94)') {
+                        inputEl.style.borderColor = '#8b5cf6';
+                        inputEl.style.boxShadow = '0 0 0 3px rgba(139, 92, 246, 0.15)';
+                    }
+                });
+                inputEl.addEventListener('blur', () => {
+                    if (inputEl.style.borderColor !== 'rgb(244, 63, 94)') {
+                        inputEl.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+                        inputEl.style.boxShadow = 'none';
+                    }
+                });
+                inputEl.addEventListener('input', () => {
+                    document.getElementById('error-message').style.display = 'none';
+                    inputEl.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+                    inputEl.style.boxShadow = 'none';
+                });
+            }
+
+            const storedHash = sessionStorage.getItem('bitacora_auth');
+            if (storedHash === MASTER_HASH) {
+                unlockPage();
+            }
+        });
+    </script>
+    <!-- PASSWORD GATE END -->
+
+    <div id="content-container" style="display: none;">
+        <button class="print-btn" onclick="window.print()">🖨️ Exportar a PDF</button>
+        <div class="container">
         <header>
             <div class="title-badge">Formulario de Postulación Oficial</div>
             <h1>Plataforma de Inteligencia Clínica</h1>
@@ -297,7 +394,7 @@
                 </div>
                 <div class="answer-text-area" id="ans-ods">
                     <button class="copy-btn" onclick="copyText('ans-ods')">Copiar</button>
-                    "Nuestra plataforma impacta de forma directa en el <strong>ODS (Objetivos de Desarrollo Sostenible) 3: Salud y Bienestar</strong>, abordando dos brechas críticas en la salud ambulatoria. Primero, optimiza la salud ocupacional de los profesionales (psicólogos, fonoaudiólogos, terapeutas) que sufren sobrecarga y burnout (síndrome de desgaste profesional) de más de un 40%. Mediante una IA (Inteligencia Artificial) de procesamiento de lenguaje natural y narrativa estructurada, reduce entre 50% y 80% los tiempos de redacción de fichas clínicas e informes, disminuyendo su fatiga mental y administrativa. Segundo, esta liberación de tiempo mejora la calidad y el seguimiento terapéutico de los pacientes. Al integrar un ecosistema interdisciplinario interoperable con estándares CENS (Centro Nacional de Sistemas de Información en Salud) y supervisión asistida por IA (Inteligencia Artificial), aseguramos una medicina digital segura, efectiva y basada en datos desde la Región de Coquimbo."
+                    "Nuestra plataforma impacta de forma directa en el <strong>ODS (Objetivos de Desarrollo Sostenible) 3: Salud y Bienestar</strong> al abordar dos brechas críticas de la salud ambulatoria. En primer lugar, optimiza la salud ocupacional de los profesionales. De acuerdo con estudios gremiales en el país, la documentación manual y la gestión de pacientes consumen el 70% de la jornada clínica de los terapeutas independientes, carga que es imposible de delegar o externalizar debido al carácter altamente privado y confidencial de la información del paciente. Mediante una Inteligencia Artificial (IA) avanzada de procesamiento de lenguaje natural y modelado clínico, reducimos entre un 50% y un 80% los tiempos de redacción de fichas e informes, mitigando su desgaste administrativo. En segundo lugar, esta liberación de tiempo optimiza el seguimiento terapéutico. Al integrar un ecosistema interoperable con estándares del Centro Nacional de Sistemas de Información en Salud (CENS) y supervisión asistida por IA, aseguramos una medicina digital segura y basada en datos desde la Región de Coquimbo."
                 </div>
             </div>
         </div>
@@ -328,7 +425,7 @@
                 </div>
                 <div class="answer-text-area" id="ans-focalizacion">
                     <button class="copy-btn" onclick="copyText('ans-focalizacion')">Copiar</button>
-                    "Nuestro proyecto se vincula directamente con el eje de <strong>Sectores Emergentes</strong>, posicionándose como una futura Empresa de Base Científico-Tecnológica (EBCT) de salud digital en la Región de Coquimbo, impulsando la adaptación de tecnologías de vanguardia en salud.<br><br>Primero, adaptamos e integramos tecnologías de frontera al incorporar una Inteligencia Artificial (IA) avanzada de procesamiento de lenguaje natural y modelado de datos clínicos estructurados. Esta tecnología permite estructurar de forma automática las fichas e informes clínicos mediante narrativa libre, resolviendo la severa sobrecarga y burnout (síndrome de desgaste profesional) de los terapeutas. Asimismo, sumamos un orquestador robótico de facturación automática con el Servicio de Impuestos Internos (SII) vía n8n.<br><br>Segundo, la plataforma se concibe bajo estándares globales de interoperabilidad clínica dictados por el Centro Nacional de Sistemas de Información en Salud (CENS) y terminologías SNOMED CT (Systematized Nomenclature of Medicine - Clinical Terms), sentando las bases de una EBCT (Empresa de Base Científico-Tecnológica) robusta.<br><br><strong>Aporte a la Región de Coquimbo:</strong><br>1. <strong>Descentralización de alta tecnología:</strong> Demostramos que es viable fundar y pilotar software clínico de nivel internacional desde la Región de Coquimbo, atrayendo talento técnico y fomentando el ecosistema local de industrias creativas digitales.<br>2. <strong>Impacto clínico local:</strong> Validamos el modelo de negocios mediante un piloto real con un centro médico regional que agrupa a 15 profesionales de la salud. Esto moderniza la gestión médica local, reduce las inasistencias en un 80% mediante asistentes de agendamiento omnicanal, y eleva la eficiencia y calidad asistencial de la región."
+                    "Nuestro proyecto se vincula directamente con el eje de <strong>Sectores Emergentes</strong>, posicionándose como una futura Empresa de Base Científico-Tecnológica (EBCT) de salud digital en la Región de Coquimbo, impulsando la adaptación de tecnologías de vanguardia en salud.<br><br>Primero, adaptamos e integramos tecnologías de frontera al incorporar una Inteligencia Artificial (IA) avanzada de procesamiento de lenguaje natural y modelado de datos clínicos estructurados. Esta tecnología permite estructurar de forma automática las fichas e informes clínicos mediante narrativa libre, resolviendo la severa sobrecarga y burnout (síndrome de desgaste profesional) de los terapeutas. Asimismo, sumamos un orquestador robótico de facturación automática con el Servicio de Impuestos Internos (SII) vía n8n.<br><br>Segundo, la plataforma se concibe bajo estándares globales de interoperabilidad clínica dictados por el Centro Nacional de Sistemas de Información en Salud (CENS) y terminologías SNOMED CT (Systematized Nomenclature of Medicine - Clinical Terms), sentando las bases de una EBCT (Empresa de Base Científico-Tecnológica) robusta.<br><br>Respecto al aporte para la Región de Coquimbo, nuestra plataforma genera dos beneficios clave. En primer lugar, impulsa la descentralización de alta tecnología al demostrar que es viable fundar y pilotar software de salud de nivel internacional desde Coquimbo, lo cual atrae talento técnico altamente especializado y dinámico para el ecosistema local de industrias creativas digitales. En segundo lugar, produce un impacto clínico local inmediato a través de la validación del modelo de negocios con un piloto real junto a un centro médico regional que reúne a 15 profesionales. De acuerdo con estimaciones del RNPI de la Superintendencia de Salud (2025), la Región de Coquimbo registra una fuerza laboral activa de más de 4.400 terapeutas multidisciplinarios, lo que representa un mercado inicial altamente receptivo para la modernización de la gestión médica local, la disminución de inasistencias en un 80% mediante asistentes omnicanales y el aumento de la eficiencia y calidad asistencial regional."
                 </div>
             </div>
 
@@ -419,8 +516,7 @@
                 <div class="answer-select">La principal innovación de mi solución corresponde a una mejora en su desarrollo o proceso productivo, lo que la hace considerablemente mejor a lo existente, lo que permitirá venderla a un precio superior al de la competencia.</div>
                 <div class="reasoning-block">
                     <div class="reasoning-title">💡 Razonamiento Estratégico y Técnico</div>
-                    Para CORFO (Corporación de Fomento de la Producción), una innovación de alto impacto se define por su capacidad de generar un valor sustancialmente mayor al mercado que la oferta actual (Propuesta de Valor disruptiva). Nuestra plataforma no compite en "bajo costo" de un commodity, sino en la entrega de una solución tecnológica de frontera: automatización de facturación con el SII (Servicio de Impuestos Internos) mediante orquestación robótica n8n, estructuración de fichas mediante Inteligencia Artificial (IA) compatible con estándares HL7 FHIR (Recursos de Interoperabilidad Rápida en Salud de Nivel Siete) y reducción proactiva de inasistencias. Esto la hace considerablemente superior a agendas estáticas básicas (como AgendaPro o Doctoralia), justificando un precio y rentabilidad premium basados en el alto retorno de inversión (ROI (Retorno de la Inversión)) que experimenta el cliente al implementarla.
-                </div>
+                    Para CORFO (Corporación de Fomento de la Producción), una innovación de alto impacto se define por su capacidad de generar un valor sustancialmente mayor al mercado que la oferta actual (Propuesta de Valor disruptiva). Nuestra plataforma no compite en "bajo costo" de un commodity, sino en la entrega de una solución tecnológica de frontera: automatización de facturación con el SII (Servicio de Impuestos Internos) mediante orquestación robótica n8n, estructuración de fichas mediante Inteligencia Artificial (IA) compatible con estándares HL7 FHIR (Recursos de Interoperabilidad Rápida en Salud de Nivel Siete) y reducción proactiva de inasistenc                </div>
             </div>
         </div>
 
@@ -437,7 +533,7 @@
                 </div>
                 <div class="answer-text-area" id="ans-problema">
                     <button class="copy-btn" onclick="copyText('ans-problema')">Copiar</button>
-                    <strong>1. Contexto y Magnitud del Dolor en Salud Mental y Terapias Ambulatorias:</strong><br>En Chile, la prevalencia de trastornos de salud mental supera el 30%, saturando los centros ambulatorios multidisciplinarios (psicología, fonoaudiología, terapia ocupacional). A pesar de contar con una alta densidad de profesionales independientes (más de 100 psicólogos por 100.000 hab. según la OCDE (Organización para la Cooperación y el Desarrollo Económicos)), el sistema colapsa debido a ineficiencias críticas en la gestión administrativa y flujos de soporte clínico del ecosistema.<br><br><strong>2. Sobrecarga Administrativa y Burnout Clínico:</strong><br>El problema central es la severa sobrecarga de trabajo no asistencial. Los terapeutas independientes destinan en promedio más del 40% de su jornada diaria a redactar manualmente fichas clínicas, transcribir notas, diseñar informes de evolución y realizar facturación tributaria manual ante el SII (Servicio de Impuestos Internos). Esta carga excesiva reduce el tiempo directo de atención asistencial y es el detonante principal del burnout clínico, el cual supera el 40% en este segmento, afectando la empatía y la efectividad terapéutica.<br><br><strong>3. Inexistencia de IA e Interoperabilidad en Salud (CENS):</strong><br>Los sistemas B2B (Business-to-Business / Negocio a Negocio) actuales (como Doctoralia o AgendaPro) operan como agendas estáticas de reserva y pasarelas de pago. No apoyan el flujo clínico del especialista: carecen de Inteligencia Artificial (IA) capaz de procesar y estructurar notas narrativas en tiempo real, no ofrecen codificación terminológica estandarizada (SNOMED CT (Systematized Nomenclature of Medicine - Clinical Terms)) vinculada dinámicamente a clasificaciones de reembolso local (CIE-10 (Clasificación Internacional de Enfermedades, 10.ª revisión)), ni cumplen con las normas de interoperabilidad clínica (HL7 FHIR (Recursos de Interoperabilidad Rápida en Salud de Nivel Siete)) promovidas por el CENS (Centro Nacional de Sistemas de Información en Salud), manteniendo la información fragmentada en silos de datos aislados.<br><br><strong>4. Pérdidas por Fricción de Cobro e Inasistencias:</strong><br>Los profesionales independientes sufren una tasa de inasistencia (no-shows) de entre el 20% y el 30%. Al no contar con canales omnicanales eficientes de recordatorio y confirmación integrados a agendas dinámicas, pierden horas de consulta valiosas. Adicionalmente, el cobro y posterior emisión manual de boletas de honorarios en el SII (Servicio de Impuestos Internos) genera fricción en la relación terapeuta-paciente y consume horas administrativas críticas que podrían destinarse al estudio de casos.
+                    En salud mental y terapias ambulatorias, el informe global de la OCDE en Chile (2023) expone que más del 30% de la población presenta trastornos activos, saturando el sistema. En Coquimbo, aunque existen más de 4.400 especialistas según la Superintendencia de Salud (2025), el sistema colapsa por el aislamiento profesional y una severa sobrecarga administrativa. Las tareas manuales de gestión y digitación consumen el 70% de la jornada clínica de los terapeutas independientes. Este desgaste, imposible de delegar debido al carácter confidencial de la ficha clínica, reduce el tiempo de atención y eleva la prevalencia del burnout a más del 40%. Además, el terapeuta independiente trabaja aislado, sin acceso a redes de supervisión clínica ni a herramientas dinámicas de aprendizaje continuo en box para contrastar diagnósticos.<br><br>A esto se suma la fragmentación del ecosistema. Las soluciones comerciales vigentes—como Reservo, software administrativo utilizado actualmente por nuestro centro piloto—operan meramente como agendas estáticas y pasarelas de pago. Estos sistemas carecen de inteligencia artificial para transcribir y estructurar notas en tiempo real bajo estándares CENS (HL7 FHIR / SNOMED CT). Lo más crítico es que no apoyan el pensamiento clínico del especialista mediante la recomendación de bibliografía académica relevante para sus casos, ni permiten cruzar datos clínicos de forma segura entre disciplinas (psicología, terapia ocupacional, fonoaudiología), impidiendo tratamientos multidisciplinarios unificados.<br><br>Finalmente, la fricción de cobros e inasistencias provoca pérdidas de hasta 30% de los ingresos. El cobro manual a fonasa, la emisión individual de boletas a pacientes y la digitación diaria de bonos en mesón consumen horas críticas que deberían destinarse a la atención directa del paciente y al estudio científico de los casos.
                 </div>
             </div>
 
@@ -449,7 +545,55 @@
                 </div>
                 <div class="answer-text-area" id="ans-identificacion">
                     <button class="copy-btn" onclick="copyText('ans-identificacion')">Copiar</button>
-                    <strong>1. Identificación y Validación:</strong> Identificado al dirigir nuestro centro multidisciplinario en Coquimbo (psicología, pediatría, fonoaudiología, terapia ocupacional, psicopedagogía). Para validar el dolor a nivel multi-regional, realizamos una auditoría operacional cruzada con un centro análogo en la Región Metropolitana (Santiago) liderado por mi hermano, encuestando a 30 terapeutas.<br><br><strong>2. Frecuencia y Relevancia:</strong> El dolor es diario y crítico: se destina el 40% del tiempo a la redacción manual de informes y fichas clínicas. Validamos una tasa de inasistencia (no-show) del 23,5% consolidada entre ambos centros, con pérdidas de hasta $1.200.000 mensuales por profesional debido a horas de consulta vacías y fricción de cobro manual ante el SII (Servicio de Impuestos Internos).<br><br><strong>3. Respaldos:</strong> 1) Reporte OCDE (Organización para la Cooperación y el Desarrollo Económicos) "Mental Health Performance in Chile 2023" asocia el alto burnout (síndrome de desgaste profesional) clínico con la carga excesiva de documentación administrativa. 2) CENS (Centro Nacional de Sistemas de Información en Salud) 2024 ratifica que el 85% de los sistemas de registro operan en silos cerrados que impiden la interoperabilidad multidisciplinaria.<br><br><strong>4. Soluciones Actuales y Vacíos:</strong> Se usan agendas estáticas (AgendaPro, Doctoralia), fichas planas y confirmaciones telefónicas manuales. Limitaciones superadas: carecen de Inteligencia Artificial (IA) para estructuración semántica de notas narrativas en tiempo real; no unifican el historial del paciente entre especialidades bajo estándares CENS (HL7 FHIR (Recursos de Interoperabilidad Rápida en Salud de Nivel Siete) / SNOMED CT (Systematized Nomenclature of Medicine - Clinical Terms)); y no automatizan el enlace agenda-SII (Servicio de Impuestos Internos) de cobro, perpetuando pérdidas por no-shows y alta carga secretarial.
+                    Para identificar y validar este problema, nos basamos en nuestra experiencia liderando un centro multidisciplinario en Coquimbo que agrupa especialidades como psicología, pediatría, fonoaudiología y terapia ocupacional, el cual utiliza actualmente Reservo como software de gestión. Al constatar las severas limitaciones de este sistema—que actúa únicamente como agenda estática de reservas e impide la coordinación clínica multidisciplinaria—realizamos una auditoría operacional cruzada con un centro análogo en la Región Metropolitana, completando encuestas en profundidad a 30 terapeutas activos.<br><br>En frecuencia y relevancia, evidenciamos que el problema es diario y crítico: los profesionales destinan el 70% de su tiempo a la redacción manual de fichas en box, operando aislados y sin redes de apoyo formativo. Las encuestas validaron que la falta de herramientas para el cruce de datos interdisciplinarios impide la coordinación de terapias conjuntas en el 90% de los casos evaluados, afectando directamente la efectividad del tratamiento. Además, confirmamos que el 95% de los especialistas carece de métodos rápidos para acceder a referencias bibliográficas y papers científicos en box, restringiendo su aprendizaje clínico constante ante diagnósticos complejos.<br><br>Como respaldo documental, el reporte de la OCDE en Chile (2023) asocia el burnout de los especialistas a la sobrecarga administrativa y documentación redundante. Asimismo, el Centro Nacional de Sistemas de Información en Salud (CENS, 2025) ratifica que el 85% de los sistemas operan bajo silos de información cerrados, limitando el potencial de los terapeutas de la región.<br><br>Frente a los vacíos de soluciones vigentes como Reservo, nuestra propuesta establece la Inteligencia Artificial clínica como el núcleo de la postulación. Habilitamos la transcripción inteligente de fichas y un asistente de supervisión de casos que plantea interrogantes reflexivas y provee bibliografía académica pertinente. A su vez, nuestra solución rompe el aislamiento al cruzar datos de manera segura entre especialidades para planes de atención unificados bajo estándares CENS, apoyando secundariamente la administración mediante la automatización de cobros a fonasa y emisión de boletas.
+                </div>
+            </div>
+
+            <!-- Pregunta Innovación 3 -->
+            <div class="question-block">
+                <div class="question-label">
+                    <span class="question-number">3.</span>
+                    Explica por qué es importante para tu cliente potencial resolver este problema o aprovechar la oportunidad identificada:
+                </div>
+                <div class="answer-text-area" id="ans-importancia">
+                    <button class="copy-btn" onclick="copyText('ans-importancia')">Copiar</button>
+                    Para nuestro cliente potencial—centros multidisciplinarios y terapeutas independientes de la Región de Coquimbo—resolver este problema es crítico porque impacta directamente en su sostenibilidad financiera, salud ocupacional y calidad de servicio. En primer lugar, la documentación manual en box y la gestión de pacientes consumen el 70% de su jornada, una sobrecarga administrativa que es imposible de externalizar debido al carácter estrictamente confidencial de la información clínica. Investigaciones gremiales sobre salud ocupacional concluyen que este desgaste administrativo es el principal desencadenante de burnout clínico, afectando a más del 40% de los especialistas. Liberar este tiempo mediante el registro clínico asistido por Inteligencia Artificial no solo mitiga el desgaste profesional, sino que permite reconvertir esas horas administrativas en consultas directas de alto valor asistencial, mejorando inmediatamente la calidad de vida del profesional y el progreso del paciente.<br><br>En segundo lugar, la ineficiencia operacional y la fricción contable destruyen la rentabilidad del centro, generando pérdidas de hasta el 30% de los ingresos potenciales debido a inasistencias no gestionadas y a la cobranza manual compleja. Frente a esto, nuestra solución incorpora un motor de automatización inteligente de flujos contables y administrativos que emite y concilia automáticamente boletas electrónicas a pacientes y facturas a fonasa en segundo plano. Al personal administrativo le toma en promedio de 3 a 4 minutos de digitación manual emitir y conciliar un documento de cobro individual; al incorporar un 50% de sobrecarga por fatiga y cuadratura manual, el tiempo real consumido asciende a un promedio de 4.5 a 6 minutos por transacción. Dado que nuestro motor inteligente realiza esta tarea de manera 100% autónoma en solo 45 segundos de ejecución por documento, el tiempo de digitación activa del personal clínico se reduce a cero, logrando que el tiempo ahorrado sea la totalidad de lo que demoraría la acción manual (hasta 6 minutos libres por cada documento emitido).<br><br>Asimismo, en el proceso de activación de bonos de fonasa, el recepcionista requiere entre 1 a 2 minutos por bono; incorporando un 50% de recargo por interrupciones telefónicas y verificación, el proceso insume de 1.5 a 3 minutos por bono. Nuestro servicio de automatización en segundo plano ejecuta este proceso de forma totalmente autónoma en un promedio real de solo 45 a 50 segundos por bono (procesando lotes masivos de 64 bonos en 50 minutos). Al liberarlos por completo de esta digitación mecánica, el tiempo ahorrado para el personal es el 100% de la duración de la acción manual (hasta 3 minutos libres de digitación activa por cada bono), eliminando por completo la digitación en mesón clínico y permitiendo reasignar esas horas a tareas de alta fidelidad asistencial. Esto recupera ingresos significativos en horas vacías bajo un costo de suscripción que se posiciona de forma muy competitiva dentro del margen de la competencia y que mejora y se optimiza según el nivel de servicio entregado.<br><br>Finalmente, migrar de silos administrativos estáticos como Reservo hacia un ecosistema unificado e interoperable bajo estándares CENS y SNOMED CT les permite ofrecer tratamientos multidisciplinarios coordinados, rompiendo el aislamiento profesional y elevando la calidad asistencial percibida por el paciente.
+                </div>
+            </div>
+
+            <!-- Pregunta Innovación 4 -->
+            <div class="question-block">
+                <div class="question-label">
+                    <span class="question-number">4.</span>
+                    Describe la innovación en tu producto o servicio y explica cómo aporta valor en comparación con otras soluciones que están en el mercado. Se debe hacer referencia a los 3 atributos más relevantes de la solución frente a la competencia. Es decir, señala y explica cuáles son las características de la solución justificando los beneficios que recibiría el potencial cliente con su uso y que harán que la prefiera por sobre otras alternativas:
+                </div>
+                <div class="answer-text-area" id="ans-innovacion-atributos">
+                    <button class="copy-btn" onclick="copyText('ans-innovacion-atributos')">Copiar</button>
+                    Nuestra propuesta de software clínico presenta una innovación disruptiva respecto a las soluciones de gestión tradicionales del mercado al transitar desde un silo administrativo estático como Reservo hacia un ecosistema de soporte clínico activo y automatización integrada. El primer atributo innovador es el Registro Clínico Asistido por Narrativa Estructurada con Inteligencia Artificial. A diferencia de las agendas convencionales que obligan al profesional a completar fichas de forma rígida o a grabar de forma invasiva las sesiones de sus pacientes, nuestra plataforma ofrece un modelo flexible: el especialista relata libremente los hallazgos en lenguaje natural tras la sesión y la IA estructura la ficha en formato clínico formal bajo terminología estandarizada. Esto disminuye los tiempos de digitación del especialista entre un 50% y un 80% en box.<br><br>El segundo atributo diferenciador es la Supervisión Clínica Asistida con enfoque educativo y formativo. Este asistente no reemplaza el criterio del profesional, sino que potencia su razonamiento clínico mediante preguntas reflexivas y la recomendación dinámica de referencias bibliográficas científicas y papers relevantes para el caso clínico analizado. Esto promueve el aprendizaje constante y rompe el aislamiento del terapeuta independiente. El tercer atributo es la Integración Interdisciplinaria Inteligente y Automatización de Procesos de Cobro. La plataforma centraliza el historial del paciente bajo estándares CENS (HL7 FHIR / SNOMED CT) garantizando total privacidad mediante una arquitectura Zero-Trust, y automatiza en segundo plano flujos críticos como la emisión de boletas a pacientes, facturación a fonasa y la activación masiva de bonos. Al integrar estas capacidades avanzadas bajo un costo de suscripción mensual que se sitúa competitivamente dentro de los márgenes de la competencia y que mejora según los servicios entregados, nuestra solución supera la fragmentación tecnológica y maximiza la rentabilidad del especialista.
+                </div>
+            </div>
+
+            <!-- Pregunta Innovación 5 -->
+            <div class="question-block">
+                <div class="question-label">
+                    <span class="question-number">5.</span>
+                    Estado de desarrollo de la solución propuesta. Indícanos los pasos e hitos relevantes logrados, tales como: testeos, avances en funcionamiento, pruebas o pilotos realizados, entre otros:
+                </div>
+                <div class="answer-text-area" id="ans-desarrollo-trl">
+                    <button class="copy-btn" onclick="copyText('ans-desarrollo-trl')">Copiar</button>
+                    Nuestra solución de inteligencia clínica se encuentra en una etapa de prototipo funcional avanzado con validación en entorno relevante, equivalente a un nivel de madurez tecnológica TRL 4 a 5. En la investigación inicial, realizamos auditorías operacionales cruzadas en centros multidisciplinarios de Coquimbo y la Región Metropolitana que utilizan el software Reservo. Entrevistamos a 30 terapeutas activos, validando que Reservo actúa como un silo cerrado y que la documentación manual de fichas y digitación contable consume el 70% de su tiempo laboral.<br><br>El hito tecnológico fundamental es que contamos con dos motores de automatización inteligente funcionales y testeados con métricas de rendimiento reales en nuestro entorno de desarrollo. En primer lugar, nuestro motor de integración inteligente para facturación y cobranza automática (emisión de boletas a pacientes y facturas a fonasa) procesa lotes contables en segundo plano en solo 45 segundos de ejecución por documento, en contraste con el proceso de digitación manual del personal administrativo que insume entre 3 a 4 minutos unitarios, ascendiendo a un promedio de 4.5 a 6 minutos reales al incorporar un 50% de fricción operacional por fatiga y cuadratura manual. Dado que nuestro motor opera con total autonomía en segundo plano, el tiempo de digitación activa se reduce a cero, permitiendo que el tiempo ahorrado para el personal administrativo sea el 100% de la duración de la acción manual (ahorrando hasta 6 minutos por documento emitido). En segundo lugar, nuestro motor de activación automática de bonos en segundo plano procesa de forma 100% autónoma lotes a un promedio real de solo 45 a 50 segundos por bono (completando lotes de 64 bonos en 50 minutos), en comparación con el proceso de digitación manual del recepcionista que requiere de 1 a 2 minutos por bono, llegando a 1.5 a 3 minutos unitarios al incorporar el 50% de tiempo adicional por interrupciones y verificación telefónica. Al ejecutarse de manera silenciosa en segundo plano, el tiempo ahorrado para el personal es la totalidad de lo que demoraría la acción manual (ahorrando hasta 3 minutos libres de digitación activa por cada bono), eliminando por completo la digitación en mesón.<br><br>A esto se suma la interfaz con perfiles de acceso Zero-Trust y una base de datos multitenant segura. Contamos con un centro piloto comprometido en Coquimbo que utiliza actualmente Reservo y agrupa a 15 especialistas activos en psicología, fonoaudiología y terapia ocupacional, listos para pilotar en terreno la reducción del desgaste administrativo, la recuperación de ingresos y la efectividad del tratamiento multidisciplinario bajo condiciones reales.<br><br>Finalmente, respecto a las soluciones actuales y sus vacíos operacionales, los centros médicos suelen recurrir a agendas estáticas básicas, planillas planas o registros físicos de papel. Nuestra propuesta supera estas limitaciones al establecer el motor de Inteligencia Artificial clínica como el núcleo de la postulación, resolviendo de fábrica la transcripción inteligente de fichas narrativas y habilitando un asistente virtual que actúa como supervisor interactivo de casos, planteando interrogantes reflexivas y proporcionando bibliografía académica pertinente para el aprendizaje constante del profesional. A su vez, nuestra solución rompe el aislamiento al cruzar datos de manera segura entre distintas especialidades para tratamientos multidisciplinarios unificados bajo estándares CENS, apoyando secundariamente la operación administrativa mediante la automatización de cobros a fonasa, emisión de boletas y reducción de inasistencias.
+                </div>
+            </div>
+
+            <!-- Pregunta Innovación 6 -->
+            <div class="question-block">
+                <div class="question-label">
+                    <span class="question-number">6.</span>
+                    Describe a tus principales competidores o soluciones similares que hay en el mercado, indicando sus características y debilidades en relación con el problema que buscas resolver:
+                </div>
+                <div class="answer-text-area" id="ans-competidores">
+                    <button class="copy-btn" onclick="copyText('ans-competidores')">Copiar</button>
+                    En el mercado nacional de software de salud identificamos competidores directos en gestión administrativa, destacando Doctoralia, Encuadrado, Reservo y AgendaPro, además de soluciones sustitutas manuales. Las soluciones tradicionales se caracterizan por ofrecer excelentes herramientas de agendamiento de citas, pasarelas de pago y recordatorios básicos. Su principal fortaleza radica en la digitalización administrativa de cara al paciente. Sin embargo, todos ellos presentan debilidades críticas frente a nuestra propuesta clínica. En primer lugar, operan como agendas estáticas y silos administrativos aislados que carecen de Inteligencia Artificial para la estructuración de notas narrativas en box. Competidores como Doctoralia cobran tarifas adicionales sumamente elevadas para acceder a herramientas básicas de transcripción por IA, lo que representa una barrera insalvable para terapeutas independientes.<br><br>En segundo lugar, software administrativos como Reservo—utilizado actualmente por nuestro centro piloto—carecen de módulos de apoyo clínico formativo o supervisión asistida para el especialista, forzándolo a resolver casos complejos en absoluto aislamiento. En tercer lugar, no cumplen con la interoperabilidad HL7 FHIR ni la codificación terminológica SNOMED CT, impidiendo cruzar datos de forma segura entre especialidades para diseñar planes multidisciplinarios coordinados. Finalmente, carecen de motores de automatización inteligente en segundo plano para procesar la facturación de cobro a fonasa, la emisión de boletas a pacientes o la activación masiva de bonos, obligando al personal administrativo a realizar estas tareas de digitación redundantes y altamente propensas a errores de forma manual.<br><br>Nuestra propuesta supera integralmente estas debilidades al consolidar una plataforma de inteligencia clínica interoperable y automatizada en sus flujos contables y de bonos, con un costo mensual de suscripción que se posiciona competitivamente dentro del margen de la competencia y que se ajusta según el nivel de servicio entregado.
                 </div>
             </div>
         </div>
@@ -469,5 +613,6 @@
             });
         }
     </script>
+    </div>
 </body>
 </html>
